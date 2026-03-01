@@ -158,3 +158,85 @@ h1 {
     color: #656d76;
     font-style: italic;
 }
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #0d1117;
+        color: #e6edf3;
+    }
+
+    .input-panel textarea {
+        background: #161b22;
+        border-color: #30363d;
+        color: #e6edf3;
+    }
+
+    .input-panel textarea:focus {
+        border-color: #58a6ff;
+        box-shadow: 0 0 0 3px rgba(56, 139, 253, 0.2);
+    }
+
+    .input-panel textarea.drag-over {
+        border-color: #3fb950;
+        box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.2);
+        background: #122117;
+    }
+
+    #diff-button {
+        background: #238636;
+    }
+
+    #diff-button:hover {
+        background: #2ea043;
+    }
+
+    #diff-button:active {
+        background: #238636;
+    }
+
+    .diff-container {
+        border-color: #30363d;
+        background: #161b22;
+    }
+
+    .diff-line-num {
+        color: #848d97;
+        background: #161b22;
+        border-color: #30363d;
+    }
+
+    .diff-table td:nth-child(2) {
+        border-color: #30363d;
+    }
+
+    .diff-line-removed {
+        background: #3d1f1f;
+    }
+
+    .diff-line-added {
+        background: #1f3d1f;
+    }
+
+    .diff-line-empty {
+        background: #161b22;
+    }
+
+    .diff-line-unchanged {
+        background: #0d1117;
+    }
+
+    .diff-removed {
+        background: #6e3630;
+        color: #ffa198;
+    }
+
+    .diff-added {
+        background: #2b6a30;
+        color: #7ee787;
+    }
+
+    #diff-output:empty::before {
+        color: #848d97;
+    }
+}
