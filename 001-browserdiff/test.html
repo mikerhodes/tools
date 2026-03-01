@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Diff Tool Tests</title>
+    <style>
+        body { font-family: monospace; padding: 20px; }
+        .pass { color: green; }
+        .fail { color: red; }
+        .test-result { margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>Diff Tool Tests</h1>
+    <div id="results"></div>
+
+    <script src="diff.js"></script>
+    <script src="app.js"></script>
+    <script>
+        const results = document.getElementById('results');
+        let passed = 0;
+        let failed = 0;
+
+        function test(name, fn) {
+            try {
+                fn();
+                passed++;
+                results.innerHTML += `<div class="test-result pass">✓ ${name}</div>`;
+            } catch (e) {
+                failed++;
+                results.innerHTML += `<div class="test-result fail">✗ ${name}: ${e.message}</div>`;
+            }
+        }
+
+        function assertEqual(actual, expected, msg) {
+            if (actual !== expected) {
+                throw new Error(`${msg || ''} Expected "${expected}" but got "${actual}"`);
+            }
+        }
+
+        function assertContains(html, substring, msg) {
+            if (!html.includes(substring)) {
+                throw new Error(`${msg || ''} Expected HTML to contain "${substring}"`);
+            }
+        }
+
+        // Test: Diff library is loaded
+        test('Diff library is loaded', () => {
+            if (typeof Diff === 'undefined') {
+                throw new Error('Diff is not defined');
+            }
+            if (typeof Diff.diffWords !== 'function') {
+                throw new Error('Diff.diffWords is not a function');
+            }
+        });
+
+        // Test: diffWords returns expected structure
+        test('diffWords returns change objects', () => {
+            const changes = Diff.diffWords('hello world', 'hello there');
+            if (!Array.isArray(changes)) {
+                throw new Error('Expected array');
+            }
+            if (changes.length === 0) {
+                throw new Error('Expected non-empty array');
+            }
+        });
+
+        // Test: renderSplitDiff function exists
+        test('renderSplitDiff function exists', () => {
+            if (typeof renderSplitDiff !== 'function') {
+                throw new Error('renderSplitDiff is not defined');
+            }
+        });
+
+        // Test: renderSplitDiff handles identical content
+        test('renderSplitDiff handles identical content', () => {
+            const html = renderSplitDiff('hello world', 'hello world');
+            assertContains(html, 'hello world', 'Should contain unchanged text');
+            // Should not have removed or added classes for identical content
+            if (html.includes('diff-removed') || html.includes('diff-added')) {
+                throw new Error('Identical content should not have diff markers');
+            }
+        });
+
+        // Test: renderSplitDiff marks removed words
+        test('renderSplitDiff marks removed words', () => {
+            const html = renderSplitDiff('hello world', 'hello');
+            assertContains(html, 'diff-removed', 'Should have removed class');
+            assertContains(html, 'world', 'Should contain removed word');
+        });
+
+        // Test: renderSplitDiff marks added words
+        test('renderSplitDiff marks added words', () => {
+            const html = renderSplitDiff('hello', 'hello world');
+            assertContains(html, 'diff-added', 'Should have added class');
+            assertContains(html, 'world', 'Should contain added word');
+        });
+
+        // Test: Split view has left and right sides
+        test('renderSplitDiff produces left and right columns', () => {
+            const html = renderSplitDiff('old text', 'new text');
+            assertContains(html, 'diff-left', 'Should have left column');
+            assertContains(html, 'diff-right', 'Should have right column');
+        });
+
+        // Test: Handles multi-line content
+        test('renderSplitDiff handles multi-line content', () => {
+            const html = renderSplitDiff('line1\nline2', 'line1\nline3');
+            assertContains(html, 'line1', 'Should contain unchanged line');
+        });
+
+        // Test: Empty input handling
+        test('renderSplitDiff handles empty inputs', () => {
+            const html = renderSplitDiff('', '');
+            // Should not throw and should return valid HTML
+            if (typeof html !== 'string') {
+                throw new Error('Should return a string');
+            }
+        });
+
+        // Summary
+        results.innerHTML += `<hr><div>Total: ${passed + failed}, Passed: ${passed}, Failed: ${failed}</div>`;
+    </script>
+</body>
+</html>

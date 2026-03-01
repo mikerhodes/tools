@@ -1,0 +1,124 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: #f6f8fa;
+    color: #24292f;
+}
+
+h1 {
+    margin: 0 0 20px 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.input-container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.input-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-panel label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.input-panel textarea {
+    flex: 1;
+    min-height: 200px;
+    padding: 12px;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.input-panel textarea:focus {
+    outline: none;
+    border-color: #0969da;
+    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+}
+
+.button-container {
+    margin-bottom: 20px;
+}
+
+#diff-button {
+    background: #2da44e;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#diff-button:hover {
+    background: #2c974b;
+}
+
+#diff-button:active {
+    background: #298e46;
+}
+
+/* Diff output styles */
+.diff-container {
+    display: flex;
+    gap: 0;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    overflow: hidden;
+    background: white;
+}
+
+.diff-left,
+.diff-right {
+    flex: 1;
+    padding: 12px;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-x: auto;
+}
+
+.diff-left {
+    background: #fff5f5;
+    border-right: 1px solid #d0d7de;
+}
+
+.diff-right {
+    background: #f0fff4;
+}
+
+.diff-removed {
+    background: #ffcecb;
+    color: #9a1c1c;
+    text-decoration: none;
+}
+
+.diff-added {
+    background: #abf2bc;
+    color: #116329;
+}
+
+#diff-output:empty::before {
+    content: 'Click "Diff" to compare the texts';
+    color: #656d76;
+    font-style: italic;
+}

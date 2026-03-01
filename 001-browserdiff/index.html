@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Diff Tool</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Text Diff Tool</h1>
+
+    <div class="input-container">
+        <div class="input-panel">
+            <label for="left-input">Original</label>
+            <textarea id="left-input" placeholder="Paste original text here..."></textarea>
+        </div>
+        <div class="input-panel">
+            <label for="right-input">Modified</label>
+            <textarea id="right-input" placeholder="Paste modified text here..."></textarea>
+        </div>
+    </div>
+
+    <div class="button-container">
+        <button id="diff-button">Diff</button>
+    </div>
+
+    <div id="diff-output"></div>
+
+    <script src="diff.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
