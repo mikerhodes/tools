@@ -126,7 +126,7 @@ h1 {
 }
 
 #diff-output:empty::before {
-    content: 'Paste text or drag files into the boxes above, then click "Diff" to compare';
+    content: 'Click "Diff" to compare the texts';
     color: #656d76;
     font-style: italic;
 }
