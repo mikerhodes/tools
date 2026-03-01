@@ -85,39 +85,67 @@ h1 {
 
 /* Diff output styles */
 .diff-container {
-    display: flex;
-    gap: 0;
     border: 1px solid #d0d7de;
     border-radius: 6px;
     overflow: hidden;
     background: white;
 }
 
-.diff-left,
-.diff-right {
-    flex: 1;
-    padding: 12px;
+.diff-table {
+    width: 100%;
+    border-collapse: collapse;
     font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
     font-size: 13px;
-    line-height: 1.5;
-    white-space: pre-wrap;
-    word-break: break-word;
-    overflow-x: auto;
+    line-height: 1.4;
+    table-layout: fixed;
 }
 
-.diff-left {
-    background: #fff5f5;
+.diff-line-num {
+    width: 40px;
+    padding: 0 8px;
+    text-align: right;
+    color: #656d76;
+    background: #f6f8fa;
+    border-right: 1px solid #d0d7de;
+    user-select: none;
+    vertical-align: top;
+}
+
+.diff-line-content {
+    width: calc(50% - 40px);
+    padding: 0 12px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    vertical-align: top;
+    overflow: hidden;
+}
+
+/* Left side (columns 1-2) */
+.diff-table td:nth-child(2) {
     border-right: 1px solid #d0d7de;
 }
 
-.diff-right {
-    background: #f0fff4;
+/* Line type backgrounds */
+.diff-line-removed {
+    background: #ffebe9;
 }
 
+.diff-line-added {
+    background: #e6ffec;
+}
+
+.diff-line-empty {
+    background: #f6f8fa;
+}
+
+.diff-line-unchanged {
+    background: white;
+}
+
+/* Inline word highlighting */
 .diff-removed {
     background: #ffcecb;
     color: #9a1c1c;
-    text-decoration: none;
 }
 
 .diff-added {

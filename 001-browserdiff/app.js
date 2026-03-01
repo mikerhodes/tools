@@ -1,11 +1,11 @@
 /**
- * Render a split diff view comparing two text strings.
- * @param {string} oldText - The original text
- * @param {string} newText - The modified text
- * @returns {string} HTML string for the split diff view
+ * Render a line with word-level diff highlighting
+ * @param {string} oldLine - The original line
+ * @param {string} newLine - The modified line
+ * @returns {{left: string, right: string}} HTML for left and right sides
  */
-function renderSplitDiff(oldText, newText) {
-    const changes = Diff.diffWords(oldText, newText);
+function renderLineDiff(oldLine, newLine) {
+    const changes = Diff.diffWords(oldLine, newLine);
 
     let leftHtml = '';
     let rightHtml = '';
@@ -23,10 +23,119 @@ function renderSplitDiff(oldText, newText) {
         }
     }
 
-    return `<div class="diff-container">
-        <div class="diff-left">${leftHtml}</div>
-        <div class="diff-right">${rightHtml}</div>
-    </div>`;
+    return { left: leftHtml, right: rightHtml };
+}
+
+/**
+ * Render a split diff view comparing two text strings.
+ * @param {string} oldText - The original text
+ * @param {string} newText - The modified text
+ * @returns {string} HTML string for the split diff view
+ */
+function renderSplitDiff(oldText, newText) {
+    const lineChanges = Diff.diffLines(oldText, newText);
+
+    let rows = [];
+    let leftLineNum = 1;
+    let rightLineNum = 1;
+
+    // Process changes, pairing adjacent removed/added blocks
+    for (let i = 0; i < lineChanges.length; i++) {
+        const change = lineChanges[i];
+        const lines = change.value.replace(/\n$/, '').split('\n');
+
+        if (change.removed) {
+            // Check if next change is an addition (paired change)
+            const nextChange = lineChanges[i + 1];
+            if (nextChange && nextChange.added) {
+                // Pair removed and added lines side by side
+                const addedLines = nextChange.value.replace(/\n$/, '').split('\n');
+                const maxLen = Math.max(lines.length, addedLines.length);
+
+                for (let j = 0; j < maxLen; j++) {
+                    const leftLine = lines[j];
+                    const rightLine = addedLines[j];
+
+                    rows.push({
+                        left: leftLine !== undefined ? {
+                            num: leftLineNum++,
+                            content: `<span class="diff-removed">${escapeHtml(leftLine)}</span>`,
+                            type: 'removed'
+                        } : null,
+                        right: rightLine !== undefined ? {
+                            num: rightLineNum++,
+                            content: `<span class="diff-added">${escapeHtml(rightLine)}</span>`,
+                            type: 'added'
+                        } : null
+                    });
+                }
+                i++; // Skip the next change since we processed it
+            } else {
+                // Removed only
+                for (const line of lines) {
+                    rows.push({
+                        left: {
+                            num: leftLineNum++,
+                            content: `<span class="diff-removed">${escapeHtml(line)}</span>`,
+                            type: 'removed'
+                        },
+                        right: null
+                    });
+                }
+            }
+        } else if (change.added) {
+            // Added only (not paired with a removal)
+            for (const line of lines) {
+                rows.push({
+                    left: null,
+                    right: {
+                        num: rightLineNum++,
+                        content: `<span class="diff-added">${escapeHtml(line)}</span>`,
+                        type: 'added'
+                    }
+                });
+            }
+        } else {
+            // Unchanged lines
+            for (const line of lines) {
+                rows.push({
+                    left: {
+                        num: leftLineNum++,
+                        content: escapeHtml(line),
+                        type: 'unchanged'
+                    },
+                    right: {
+                        num: rightLineNum++,
+                        content: escapeHtml(line),
+                        type: 'unchanged'
+                    }
+                });
+            }
+        }
+    }
+
+    // Render HTML
+    let html = '<div class="diff-container"><table class="diff-table">';
+
+    for (const row of rows) {
+        const leftNum = row.left ? row.left.num : '';
+        const leftContent = row.left ? row.left.content : '';
+        const leftClass = row.left ? `diff-line-${row.left.type}` : 'diff-line-empty';
+
+        const rightNum = row.right ? row.right.num : '';
+        const rightContent = row.right ? row.right.content : '';
+        const rightClass = row.right ? `diff-line-${row.right.type}` : 'diff-line-empty';
+
+        html += `<tr>
+            <td class="diff-line-num ${leftClass}">${leftNum}</td>
+            <td class="diff-line-content ${leftClass}">${leftContent}</td>
+            <td class="diff-line-num ${rightClass}">${rightNum}</td>
+            <td class="diff-line-content ${rightClass}">${rightContent}</td>
+        </tr>`;
+    }
+
+    html += '</table></div>';
+    return html;
 }
 
 /**
