@@ -41,6 +41,35 @@ function escapeHtml(text) {
 }
 
 /**
+ * Set up drag and drop file reading for a textarea
+ * @param {HTMLTextAreaElement} textarea - The textarea element
+ */
+function setupFileDrop(textarea) {
+    textarea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        textarea.classList.add('drag-over');
+    });
+
+    textarea.addEventListener('dragleave', () => {
+        textarea.classList.remove('drag-over');
+    });
+
+    textarea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        textarea.classList.remove('drag-over');
+
+        const file = e.dataTransfer.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            textarea.value = event.target.result;
+        };
+        reader.readAsText(file);
+    });
+}
+
+/**
  * Initialize the diff tool UI
  */
 function initDiffTool() {
@@ -52,6 +81,9 @@ function initDiffTool() {
     if (!diffButton || !leftInput || !rightInput || !diffOutput) {
         return; // Not on the main page
     }
+
+    setupFileDrop(leftInput);
+    setupFileDrop(rightInput);
 
     diffButton.addEventListener('click', () => {
         const oldText = leftInput.value;

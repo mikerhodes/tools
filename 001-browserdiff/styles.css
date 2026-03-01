@@ -52,6 +52,12 @@ h1 {
     box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
 }
 
+.input-panel textarea.drag-over {
+    border-color: #2da44e;
+    box-shadow: 0 0 0 3px rgba(45, 164, 78, 0.2);
+    background: #f0fff4;
+}
+
 .button-container {
     margin-bottom: 20px;
     text-align: center;
@@ -120,7 +126,7 @@ h1 {
 }
 
 #diff-output:empty::before {
-    content: 'Click "Diff" to compare the texts';
+    content: 'Paste text or drag files into the boxes above, then click "Diff" to compare';
     color: #656d76;
     font-style: italic;
 }
