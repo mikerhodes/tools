@@ -1,19 +1,46 @@
+:root {
+    --accent:             #c4622d;
+    --accent-dark:        #5a4030;
+    --page-bg:            #f7f3ee;
+    --container-bg:       #ede8e0;
+    --focus-container-bg: #e8ddd4;
+    --surface-bg:         #fdfcfa;
+    --text-active:        #3a2e24;
+    --text-muted:         #a89888;
+    --text-secondary:     #8a7060;
+    --ui-chrome:          #b8a898;
+    --error:              #c0392b;
+    --surface-border:     #ccc4b8;
+    --surface-bottom:     #b8b0a4;
+    --drag-outline:       #c4622d;
+}
+
 * {
     box-sizing: border-box;
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     margin: 0;
-    padding: 20px;
-    background: #f6f8fa;
-    color: #24292f;
+    padding: 28px;
+    background: var(--page-bg);
+    color: var(--text-active);
+    font-size: 0.875rem;
+}
+
+header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
 
 h1 {
-    margin: 0 0 20px 0;
-    font-size: 24px;
+    margin: 0;
+    font-family: monospace;
+    font-size: 1.25rem;
     font-weight: 600;
+    color: var(--accent);
 }
 
 .input-container {
@@ -29,33 +56,38 @@ h1 {
 }
 
 .input-panel label {
-    font-weight: 600;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
     margin-bottom: 8px;
-    font-size: 14px;
 }
 
 .input-panel textarea {
     flex: 1;
     min-height: 200px;
     padding: 12px;
-    border: 1px solid #d0d7de;
+    background: var(--surface-bg);
+    border: 1px solid var(--surface-border);
     border-radius: 6px;
     font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
     font-size: 13px;
     line-height: 1.5;
+    color: var(--text-active);
     resize: vertical;
 }
 
 .input-panel textarea:focus {
     outline: none;
-    border-color: #0969da;
-    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+    border-color: var(--accent);
+    border-bottom-color: var(--accent-dark);
 }
 
 .input-panel textarea.drag-over {
-    border-color: #2da44e;
-    box-shadow: 0 0 0 3px rgba(45, 164, 78, 0.2);
-    background: #f0fff4;
+    outline: 2px solid var(--drag-outline);
+    outline-offset: -1px;
+    background: var(--focus-container-bg);
 }
 
 .button-container {
@@ -63,32 +95,56 @@ h1 {
     text-align: center;
 }
 
+#demo-button {
+    background: var(--surface-bg);
+    border: 1px solid var(--surface-border);
+    border-bottom: 3px solid var(--surface-bottom);
+    color: var(--accent-dark);
+    padding: 3px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#demo-button:hover {
+    color: var(--accent);
+}
+
+#demo-button:active {
+    border-bottom-width: 1px;
+    transform: translateY(2px);
+}
+
 #diff-button {
-    background: #2da44e;
-    color: white;
-    border: none;
-    padding: 10px 20px;
+    background: var(--accent);
+    border: 1px solid var(--accent-dark);
+    border-bottom: 3px solid var(--accent-dark);
+    color: #fff;
+    padding: 6px 14px;
     width: 200px;
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 600;
     border-radius: 6px;
     cursor: pointer;
 }
 
 #diff-button:hover {
-    background: #2c974b;
+    background: #a84f22;
+    border-color: #3a2010;
 }
 
 #diff-button:active {
-    background: #298e46;
+    border-bottom-width: 1px;
+    transform: translateY(2px);
 }
 
 /* Diff output styles */
 .diff-container {
-    border: 1px solid #d0d7de;
+    border: 1px solid var(--surface-border);
     border-radius: 6px;
     overflow: hidden;
-    background: white;
+    background: var(--surface-bg);
 }
 
 .diff-table {
@@ -104,9 +160,9 @@ h1 {
     width: 40px;
     padding: 0 8px;
     text-align: right;
-    color: #656d76;
-    background: #f6f8fa;
-    border-right: 1px solid #d0d7de;
+    color: var(--ui-chrome);
+    background: var(--container-bg);
+    border-right: 1px solid var(--surface-border);
     user-select: none;
     vertical-align: top;
 }
@@ -122,121 +178,39 @@ h1 {
 
 /* Left side (columns 1-2) */
 .diff-table td:nth-child(2) {
-    border-right: 1px solid #d0d7de;
+    border-right: 1px solid var(--surface-border);
 }
 
 /* Line type backgrounds */
 .diff-line-removed {
-    background: #ffebe9;
+    background: #f5e0d8;
 }
 
 .diff-line-added {
-    background: #e6ffec;
+    background: #dff0d8;
 }
 
 .diff-line-empty {
-    background: #f6f8fa;
+    background: var(--container-bg);
 }
 
 .diff-line-unchanged {
-    background: white;
+    background: var(--surface-bg);
 }
 
 /* Inline word highlighting */
 .diff-removed {
-    background: #ffcecb;
-    color: #9a1c1c;
+    background: #e8b8a0;
+    color: var(--accent-dark);
 }
 
 .diff-added {
-    background: #abf2bc;
-    color: #116329;
+    background: #b8d8a8;
+    color: #2a5018;
 }
 
 #diff-output:empty::before {
     content: 'Click "Diff" to compare the texts';
-    color: #656d76;
+    color: var(--text-muted);
     font-style: italic;
-}
-
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-    body {
-        background: #0d1117;
-        color: #e6edf3;
-    }
-
-    .input-panel textarea {
-        background: #161b22;
-        border-color: #30363d;
-        color: #e6edf3;
-    }
-
-    .input-panel textarea:focus {
-        border-color: #58a6ff;
-        box-shadow: 0 0 0 3px rgba(56, 139, 253, 0.2);
-    }
-
-    .input-panel textarea.drag-over {
-        border-color: #3fb950;
-        box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.2);
-        background: #122117;
-    }
-
-    #diff-button {
-        background: #238636;
-    }
-
-    #diff-button:hover {
-        background: #2ea043;
-    }
-
-    #diff-button:active {
-        background: #238636;
-    }
-
-    .diff-container {
-        border-color: #30363d;
-        background: #161b22;
-    }
-
-    .diff-line-num {
-        color: #848d97;
-        background: #161b22;
-        border-color: #30363d;
-    }
-
-    .diff-table td:nth-child(2) {
-        border-color: #30363d;
-    }
-
-    .diff-line-removed {
-        background: #3d1f1f;
-    }
-
-    .diff-line-added {
-        background: #1f3d1f;
-    }
-
-    .diff-line-empty {
-        background: #161b22;
-    }
-
-    .diff-line-unchanged {
-        background: #0d1117;
-    }
-
-    .diff-removed {
-        background: #6e3630;
-        color: #ffa198;
-    }
-
-    .diff-added {
-        background: #2b6a30;
-        color: #7ee787;
-    }
-
-    #diff-output:empty::before {
-        color: #848d97;
-    }
 }

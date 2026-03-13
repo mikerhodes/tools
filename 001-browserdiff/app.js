@@ -178,11 +178,85 @@ function setupFileDrop(textarea) {
     });
 }
 
+const DEMO_LEFT = `# Server configuration
+
+[server]
+host = 0.0.0.0
+port = 8080
+workers = 4
+timeout = 30
+
+[database]
+host = localhost
+port = 5432
+name = myapp_production
+user = appuser
+max_connections = 20
+ssl = false
+
+[cache]
+backend = memcached
+host = localhost
+port = 11211
+ttl = 300
+
+[logging]
+level = info
+format = text
+output = /var/log/myapp/app.log
+max_size_mb = 100
+backups = 3
+
+[auth]
+secret_key = change-me-in-production
+token_expiry_hours = 24
+allow_registration = true
+`;
+
+const DEMO_RIGHT = `# Server configuration
+
+[server]
+host = 0.0.0.0
+port = 9090
+workers = 8
+timeout = 60
+max_request_size_mb = 10
+
+[database]
+host = db.internal
+port = 5432
+name = myapp_production
+user = appuser
+max_connections = 50
+ssl = true
+ssl_cert = /etc/ssl/certs/db.crt
+
+[cache]
+backend = redis
+host = cache.internal
+port = 6379
+ttl = 600
+
+[logging]
+level = warn
+format = json
+output = stdout
+max_size_mb = 100
+backups = 3
+
+[auth]
+secret_key = change-me-in-production
+token_expiry_hours = 8
+allow_registration = false
+require_email_verification = true
+`;
+
 /**
  * Initialize the diff tool UI
  */
 function initDiffTool() {
     const diffButton = document.getElementById('diff-button');
+    const demoButton = document.getElementById('demo-button');
     const leftInput = document.getElementById('left-input');
     const rightInput = document.getElementById('right-input');
     const diffOutput = document.getElementById('diff-output');
@@ -193,6 +267,12 @@ function initDiffTool() {
 
     setupFileDrop(leftInput);
     setupFileDrop(rightInput);
+
+    demoButton.addEventListener('click', () => {
+        leftInput.value = DEMO_LEFT;
+        rightInput.value = DEMO_RIGHT;
+        diffOutput.innerHTML = renderSplitDiff(DEMO_LEFT, DEMO_RIGHT);
+    });
 
     diffButton.addEventListener('click', () => {
         const oldText = leftInput.value;
