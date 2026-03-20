@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Base64 Encoder / Decoder</title>
+  <style>
+    /* umber-light */
+    @media (prefers-color-scheme: light) {
+      :root {
+        --accent:            #c4622d;
+        --accent-hover:      #a84f22;
+        --accent-dark:       #5a4030;
+        --accent-dark-hover: #3a2010;
+        --page-bg:           #f7f3ee;
+        --surface-bg:        #fdfcfa;
+        --text-active:       #3a2e24;
+        --text-secondary:    #8a7060;
+        --ui-chrome:         #b8a898;
+        --error:             #c0392b;
+        --surface-border:    #ccc4b8;
+        --surface-bottom:    #b8b0a4;
+      }
+    }
+    /* umber-dark */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --accent:            #c4622d;
+        --accent-hover:      #a84f22;
+        --accent-dark:       #e07840;
+        --accent-dark-hover: #c46030;
+        --page-bg:           #1e1810;
+        --surface-bg:        #32281c;
+        --text-active:       #e8d8c0;
+        --text-secondary:    #a89070;
+        --ui-chrome:         #786050;
+        --error:             #e05040;
+        --surface-border:    #4a3c2c;
+        --surface-bottom:    #5a4a36;
+      }
+    }
+    /* ember reset + body */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--page-bg);
+      color: var(--text-active);
+      font-size: 0.875rem;
+      line-height: 1.5;
+      display: flex;
+      min-height: 100vh;
+    }
+    /* ember btn */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface-bg);
+      border: 1px solid var(--surface-border);
+      border-bottom: 3px solid var(--surface-bottom);
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-family: inherit;
+      font-size: 0.8125rem;
+      color: var(--accent-dark);
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 500;
+      line-height: 1.4;
+      user-select: none;
+    }
+    .btn:hover { color: var(--accent); }
+    .btn:active, .btn.pressed {
+      border-bottom-width: 1px;
+      transform: translateY(2px);
+    }
+    /* ember form */
+    .form-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+    }
+    .form-input,
+    .form-textarea {
+      background: var(--surface-bg);
+      border: 1px solid var(--surface-border);
+      border-radius: 5px;
+      padding: 7px 10px;
+      font-family: inherit;
+      font-size: 0.8125rem;
+      color: var(--text-active);
+      width: 100%;
+    }
+    .form-input:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      border-bottom-color: var(--accent-dark);
+    }
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.5;
+    }
+  </style>
+  <style>
+    body {
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      font-family: monospace;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 2rem;
+    }
+
+    .layout {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-textarea {
+      height: 320px;
+      font-family: ui-monospace, monospace;
+      font-size: 0.875rem;
+    }
+
+    .form-textarea.error {
+      border-color: var(--error);
+    }
+
+    .error-msg {
+      font-size: 0.75rem;
+      color: var(--error);
+      min-height: 1em;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding-top: 1.5rem;
+    }
+
+    footer {
+      font-size: 0.75rem;
+      color: var(--ui-chrome);
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Base64 Encoder / Decoder</h1>
+
+<div class="layout">
+
+  <div class="pane">
+    <div class="form-label">Plain text</div>
+    <textarea id="plain" class="form-textarea" spellcheck="false">The treasure is buried under the old oak tree. Tell no one. Especially Dave.</textarea>
+    <div class="error-msg" id="plain-error"></div>
+  </div>
+
+  <div class="controls">
+    <button class="btn" id="btn-encode">Encode →</button>
+    <button class="btn" id="btn-decode">← Decode</button>
+  </div>
+
+  <div class="pane">
+    <div class="form-label">Base64</div>
+    <textarea id="b64" class="form-textarea" placeholder="Enter base64…" spellcheck="false"></textarea>
+    <div class="error-msg" id="b64-error"></div>
+  </div>
+
+</div>
+
+<footer>⚠ Psst: base64 is not a secret! Anyone can decode this in about three seconds.</footer>
+
+<script>
+  const plainEl    = document.getElementById('plain');
+  const b64El      = document.getElementById('b64');
+  const plainError = document.getElementById('plain-error');
+  const b64Error   = document.getElementById('b64-error');
+
+  document.getElementById('btn-encode').addEventListener('click', () => {
+    b64Error.textContent = '';
+    b64El.classList.remove('error');
+    try {
+      b64El.value = btoa(unescape(encodeURIComponent(plainEl.value)));
+    } catch (e) {
+      b64El.value = '';
+      b64El.classList.add('error');
+      b64Error.textContent = 'Encoding failed: ' + e.message;
+    }
+  });
+
+  document.getElementById('btn-decode').addEventListener('click', () => {
+    plainError.textContent = '';
+    plainEl.classList.remove('error');
+    try {
+      plainEl.value = decodeURIComponent(escape(atob(b64El.value.trim())));
+    } catch (e) {
+      plainEl.value = '';
+      plainEl.classList.add('error');
+      plainError.textContent = 'Invalid base64 input.';
+    }
+  });
+</script>
+</body>
+</html>
